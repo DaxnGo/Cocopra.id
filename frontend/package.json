@@ -1,0 +1,27 @@
+{
+  "name": "cocopra-frontend",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Cocopra.id — Platform Agritech Kelapa Minahasa Utara",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^6.0.1",
+    "vite": "^8.0.0"
+  },
+  "dependencies": {
+    "axios": "^1.13.6",
+    "idb": "^8.0.3",
+    "leaflet": "^1.9.4",
+    "lucide-react": "^0.577.0",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "react-leaflet": "^5.0.0",
+    "react-router-dom": "^7.13.1",
+    "recharts": "^3.8.0"
+  }
+}

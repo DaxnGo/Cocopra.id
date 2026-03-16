@@ -1,0 +1,31 @@
+DOKUMEN PENGETAHUAN PERTANIAN COCOPRA.ID
+Konteks: Pengawasan Pestisida dan SOP Pengendalian Hama Kelapa (Minahasa Utara)
+
+--- BAGIAN 1: REGULASI PESTISIDA ---
+Dasar Hukum: Peraturan Menteri Pertanian (Permentan) No. 43 Tahun 2019 tentang Pendaftaran Pestisida.
+
+Pasal Larangan Bahan Aktif:
+- Monokrotofos (Monocrotophos) secara resmi dilarang untuk digunakan di Indonesia karena toksisitasnya yang sangat tinggi bagi manusia dan lingkungan. Dilarang keras disemprotkan pada pohon kelapa.
+- Karbofuran (Carbofuran) dibatasi penggunaannya dan diawasi ketat.
+
+Ketentuan Pengawasan (Permentan 107/2014):
+- Pasal 77 (2): Pestisida yang dilarang, tidak berlebel, atau rusak wajib dimusnahkan oleh pihak berwenang.
+- Sanksi (Pasal 124): Penggunaan atau kepemilikan pestisida terlarang (seperti Monokrotofos) dapat dikenakan sanksi pidana penjara hingga 7 tahun dan denda hingga Rp 5 Miliar sesuai UU No. 12 Tahun 1992 Sistem Budidaya Tanaman.
+
+--- BAGIAN 2: SOP PENGENDALIAN HAMA KELAPA UTAMA ---
+
+1. Hama Kumbang Tanduk (Oryctes rhinoceros)
+- Karakteristik: Merusak titik tumbuh kelapa.
+- Pengendalian Mekanis: Sanitasi kebun (membersihkan batang kelapa mati), mengumpulkan larva secara manual dari tumpukan sampah organik/kotoran sapi.
+- Pengendalian Hayati (Disarankan): Pemberian jamur Metarhizium anisopliae pada sarang telur/larva, atau penggunaan Baculovirus oryctes.
+- Pengendalian Fisik: Penggunaan lampu perangkap (light traps) pada malam hari untuk menangkap kumbang dewasa.
+
+2. Hama Kutu Janur (Brontispa longissima / Kutu Putih Kelapa)
+- Karakteristik: Merusak daun muda kelapa yang belum membuka, menyebabkan daun mengering.
+- Pengendalian Hayati (Pilihan Utama): Pelepasan parasitoid Tetrastichus brontispae yang menyerang pupa hama kutu janur.
+- Pengendalian Kimiawi (Pilihan Terakhir): Injeksi batang kelapa atau infus akar dengan insektisida sistemik berbahan aktif imidakloprid. Hanya boleh dilakukan jika tingkat serangan berada di atas ambang ekonomi (kritis). Dilarang menyemprot insektisida kontak dari udara menyebar.
+
+3. Hama Kumbang Merah (Rhynchophorus ferrugineus)
+- Karakteristik: Larva menggerek batang kelapa hingga mati (mati bujang).
+- Pemantauan awal: Menggunakan perangkap feromon (ferotrap).
+- Pengendalian Kuratif: Menutup lubang gerekan pada batang dengan campuran tanah longsoran dan insektisida nabati atau injeksi batang terarah.

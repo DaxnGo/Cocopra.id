@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Offline — Cocopra.id</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(145deg, #0A1F0D 0%, #1B3A1F 50%, #0D2911 100%);
+      color: #E8F5E9;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2rem;
+    }
+
+    .container {
+      max-width: 420px;
+    }
+
+    .icon {
+      font-size: 4rem;
+      margin-bottom: 1.5rem;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      50% {
+        opacity: 0.6;
+        transform: scale(0.95);
+      }
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      color: #A5D6A7;
+    }
+
+    p {
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: #81C784;
+      margin-bottom: 1.5rem;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 0.75rem 1.5rem;
+      background: linear-gradient(135deg, #2E7D32, #43A047);
+      border: none;
+      border-radius: 12px;
+      color: #fff;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(46, 125, 50, 0.3);
+    }
+
+    .info {
+      margin-top: 2rem;
+      padding: 1rem;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 0.8rem;
+      color: #66BB6A;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="icon">🌴</div>
+    <h1>Anda Sedang Offline</h1>
+    <p>Tidak ada koneksi internet terdeteksi. Data yang sudah tersimpan di perangkat Anda tetap aman.</p>
+    <a href="/" class="btn" onclick="window.location.reload(); return false;">↻ Coba Lagi</a>
+    <div class="info">
+      💡 Data scan hama dan input harga Anda akan otomatis dikirim saat koneksi tersedia kembali (Background Sync).
+    </div>
+  </div>
+</body>
+
+</html>

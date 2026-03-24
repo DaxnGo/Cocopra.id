@@ -1,5 +1,5 @@
 @echo off
-cd frontend
+cd PROXO
 echo Starting Cocopra.id Frontend...
 npm run dev
 pause

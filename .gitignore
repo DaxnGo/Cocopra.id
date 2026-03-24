@@ -27,3 +27,11 @@ Thumbs.db
 pestisida_bersih.xlsx
 PROXO/dist/
 backend/dist/
+frontend/dist/
+
+# Database
+*.db
+!backend/cocopra.db
+
+# Chroma
+backend/chroma_data/

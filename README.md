@@ -180,7 +180,7 @@ copy .env.example .env        # Windows  (Linux/macOS: cp .env.example .env)
 # Sekali saja: bangun vector store untuk RAG assistant
 python rag_engine.py
 
-uvicorn main:app --reload --host 0.0.0.0 --port 8000
+python -m uvicorn main:app --reload --host 0.0.0.0 --port 8000
 # API at http://localhost:8000/docs
 ```
 

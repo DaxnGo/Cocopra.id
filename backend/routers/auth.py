@@ -1,37 +1,57 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Header
 from sqlalchemy.orm import Session
+import jwt
 from database import get_db
 import models
 import schemas
+from security import (
+    create_access_token,
+    decode_access_token,
+    hash_password,
+    is_password_hashed,
+    verify_password,
+)
 from typing import Optional
 
 router = APIRouter()
 
+_AUTH_HEADERS = {"WWW-Authenticate": "Bearer"}
 
-def _get_user_from_token(authorization: Optional[str] = Header(None), db: Session = Depends(get_db)):
+
+def _get_user_from_token(
+    authorization: Optional[str] = Header(None),
+    db: Session = Depends(get_db),
+):
     """
-    Ekstrak user dari token sederhana.
-    Format token MVP: cocopra_token_{role}_{username}_999
+    Ekstrak user dari Authorization header berisi JWT.
+    Format: Authorization: Bearer <token>
     """
     if not authorization:
-        raise HTTPException(status_code=401, detail="Token tidak ditemukan")
-    
-    token = authorization.replace("Bearer ", "")
-    parts = token.split("_")
-    # cocopra_token_{role}_{username}_999
-    if len(parts) < 4 or parts[0] != "cocopra" or parts[1] != "token":
-        raise HTTPException(status_code=401, detail="Token tidak valid")
-    
-    username = parts[3]
+        raise HTTPException(status_code=401, detail="Token tidak ditemukan", headers=_AUTH_HEADERS)
+
+    scheme, _, token = authorization.partition(" ")
+    if scheme.lower() != "bearer" or not token:
+        raise HTTPException(status_code=401, detail="Format token tidak valid", headers=_AUTH_HEADERS)
+
+    try:
+        payload = decode_access_token(token)
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(
+            status_code=401,
+            detail="Sesi telah berakhir, silakan login ulang",
+            headers=_AUTH_HEADERS,
+        )
+    except jwt.PyJWTError:
+        raise HTTPException(status_code=401, detail="Token tidak valid", headers=_AUTH_HEADERS)
+
+    username = payload.get("sub")
+    if not username:
+        raise HTTPException(status_code=401, detail="Token tidak valid", headers=_AUTH_HEADERS)
+
     user = db.query(models.User).filter(models.User.username == username).first()
     if not user:
-        raise HTTPException(status_code=401, detail="User tidak ditemukan")
+        raise HTTPException(status_code=401, detail="User tidak ditemukan", headers=_AUTH_HEADERS)
     return user
-
-
-def _make_token(user):
-    """Generate token sederhana untuk MVP."""
-    return f"cocopra_token_{user.role}_{user.username}_999"
 
 
 def _user_info(user):
@@ -61,20 +81,25 @@ def login(login_data: schemas.LoginRequest, db: Session = Depends(get_db)):
         )
 
     user = db.query(models.User).filter(models.User.username == username).first()
-    
+
     # Jika tidak ketemu via username, coba cari via email
     if not user and login_data.email:
         user = db.query(models.User).filter(models.User.email == login_data.email).first()
 
-    if not user or user.password_hash != login_data.password:
+    if not user or not verify_password(login_data.password, user.password_hash):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Username atau password salah",
-            headers={"WWW-Authenticate": "Bearer"},
+            headers=_AUTH_HEADERS,
         )
 
+    # Auto-upgrade: password lama yang masih plaintext di-hash saat login pertama berhasil
+    if not is_password_hashed(user.password_hash):
+        user.password_hash = hash_password(login_data.password)
+        db.commit()
+
     return {
-        "token": _make_token(user),
+        "token": create_access_token(user.username, user.role),
         "user": _user_info(user),
     }
 
@@ -82,14 +107,14 @@ def login(login_data: schemas.LoginRequest, db: Session = Depends(get_db)):
 @router.post("/register")
 def register(reg_data: schemas.RegisterRequest, db: Session = Depends(get_db)):
     """
-    Registrasi user baru.
+    Registrasi user baru (role petani).
     Response format sesuai frontend: { token, user }
     """
     # The frontend uses email for login, so we use email as the unique username
     existing = db.query(models.User).filter(
         (models.User.username == reg_data.email) | (models.User.email == reg_data.email)
     ).first()
-    
+
     if existing:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -97,10 +122,10 @@ def register(reg_data: schemas.RegisterRequest, db: Session = Depends(get_db)):
         )
 
     new_user = models.User(
-        username=reg_data.email, # Use email as the main identifier
-        email=reg_data.email,    # Store email separately as well
-        password_hash=reg_data.password,  # MVP: plaintext, production: hash
-        role=reg_data.role,
+        username=reg_data.email,  # Use email as the main identifier
+        email=reg_data.email,     # Store email separately as well
+        password_hash=hash_password(reg_data.password),
+        role="petani",  # Registrasi publik hanya untuk petani; akun dinas dibuat oleh admin
         nama_lengkap=reg_data.name,
         village=reg_data.village,
     )
@@ -109,7 +134,7 @@ def register(reg_data: schemas.RegisterRequest, db: Session = Depends(get_db)):
     db.refresh(new_user)
 
     return {
-        "token": _make_token(new_user),
+        "token": create_access_token(new_user.username, new_user.role),
         "user": _user_info(new_user),
     }
 
@@ -137,6 +162,18 @@ def update_profile(
     Update profil user (nama, email, phone, village).
     """
     user = _get_user_from_token(authorization, db)
+
+    if profile_data.email is not None and profile_data.email != user.email:
+        # Cegah bentrok dengan akun lain (email/username harus unik)
+        taken = db.query(models.User).filter(
+            ((models.User.email == profile_data.email) | (models.User.username == profile_data.email)),
+            models.User.id != user.id,
+        ).first()
+        if taken:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Email sudah digunakan akun lain"
+            )
 
     if profile_data.name is not None:
         user.nama_lengkap = profile_data.name
@@ -168,13 +205,13 @@ def change_password(
     user = _get_user_from_token(authorization, db)
 
     # Verifikasi password lama
-    if user.password_hash != pwd_data.currentPassword:
+    if not verify_password(pwd_data.currentPassword, user.password_hash):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Password saat ini salah"
         )
 
-    user.password_hash = pwd_data.newPassword  # MVP: plaintext
+    user.password_hash = hash_password(pwd_data.newPassword)
     db.commit()
 
     return {"message": "Password berhasil diperbarui"}

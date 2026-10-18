@@ -31,7 +31,6 @@ frontend/dist/
 
 # Database
 *.db
-!backend/cocopra.db
 
 # Chroma
 backend/chroma_data/

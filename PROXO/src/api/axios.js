@@ -23,10 +23,16 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    const url = error.config?.url || ''
+    const isAuthAttempt = url.includes('/auth/login') || url.includes('/auth/register')
+    // Hapus sesi & kembali ke beranda hanya jika BUKAN percobaan login/register,
+    // supaya gagal login (401) tidak memicu reload halaman.
+    if (error.response?.status === 401 && !isAuthAttempt) {
       localStorage.removeItem('token')
       localStorage.removeItem('user')
-      window.location.href = '/'
+      if (window.location.pathname !== '/') {
+        window.location.href = '/'
+      }
     }
     return Promise.reject(error)
   }

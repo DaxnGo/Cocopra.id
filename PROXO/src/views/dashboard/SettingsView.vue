@@ -323,6 +323,7 @@ import {
   CheckCircle, ScanLine, TrendingUp
 } from 'lucide-vue-next'
 import { useAuthStore } from '../../stores/auth'
+import api from '../../api/axios.js'
 import DashboardSidebar from '../../components/dashboard/DashboardSidebar.vue'
 import DashboardHeader from '../../components/dashboard/DashboardHeader.vue'
 
@@ -435,32 +436,20 @@ async function saveProfile() {
   profileError.value = ''
   profileLoading.value = true
   try {
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/auth/update-profile`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${authStore.token}`
-      },
-      body: JSON.stringify({
-        name: `${profile.value.firstName} ${profile.value.lastName}`.trim(),
-        email: profile.value.email,
-        phone: profile.value.phone,
-        village: profile.value.location,
-      })
+    const res = await api.put('/auth/update-profile', {
+      name: `${profile.value.firstName} ${profile.value.lastName}`.trim(),
+      email: profile.value.email,
+      phone: profile.value.phone,
+      village: profile.value.location,
     })
-    const data = await res.json()
-    if (res.ok) {
-      authStore.user = { ...authStore.user, ...data.user }
-      localStorage.setItem('user', JSON.stringify(authStore.user))
-      profileSaved.value = true
-      setTimeout(() => profileSaved.value = false, 3000)
-    } else {
-      profileError.value = data.message || 'Gagal memperbarui profil.'
-    }
-  } catch {
-    // API belum siap — simpan lokal dulu
+    authStore.user = { ...authStore.user, ...res.data.user }
+    localStorage.setItem('user', JSON.stringify(authStore.user))
     profileSaved.value = true
     setTimeout(() => profileSaved.value = false, 3000)
+  } catch (err) {
+    profileError.value = err.response
+      ? (err.response.data?.detail || 'Gagal memperbarui profil.')
+      : 'Tidak dapat terhubung ke server. Perubahan belum tersimpan.'
   } finally {
     profileLoading.value = false
   }
@@ -473,30 +462,17 @@ async function savePassword() {
 
   passwordLoading.value = true
   try {
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/auth/change-password`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${authStore.token}`
-      },
-      body: JSON.stringify({
-        currentPassword: passwords.value.current,
-        newPassword: passwords.value.new,
-      })
+    await api.put('/auth/change-password', {
+      currentPassword: passwords.value.current,
+      newPassword: passwords.value.new,
     })
-    const data = await res.json()
-    if (res.ok) {
-      passwordSaved.value = true
-      passwords.value = { current: '', new: '', confirm: '' }
-      setTimeout(() => passwordSaved.value = false, 3000)
-    } else {
-      passwordError.value = data.message || 'Gagal mengubah password.'
-    }
-  } catch {
-    // API belum siap — tampilkan sukses lokal
     passwordSaved.value = true
     passwords.value = { current: '', new: '', confirm: '' }
     setTimeout(() => passwordSaved.value = false, 3000)
+  } catch (err) {
+    passwordError.value = err.response
+      ? (err.response.data?.detail || 'Gagal mengubah password.')
+      : 'Tidak dapat terhubung ke server. Password belum berubah.'
   } finally {
     passwordLoading.value = false
   }

@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import Optional
 from datetime import datetime
 
@@ -63,9 +63,9 @@ class AuthResponse(BaseModel):
 class RegisterRequest(BaseModel):
     name: str
     email: str
-    password: str
+    password: str = Field(min_length=6, max_length=72)  # 72 = batas maksimum bcrypt
     village: Optional[str] = None
-    role: str = "petani"
+    role: str = "petani"  # Diabaikan server: registrasi publik selalu role "petani"
 
 class UserResponse(BaseModel):
     user: UserInfo
@@ -78,7 +78,7 @@ class UpdateProfileRequest(BaseModel):
 
 class ChangePasswordRequest(BaseModel):
     currentPassword: str
-    newPassword: str
+    newPassword: str = Field(min_length=6, max_length=72)  # 72 = batas maksimum bcrypt
 
 # --- Regulatory Schemas ---
 class PesticideResponse(BaseModel):

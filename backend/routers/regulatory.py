@@ -1,9 +1,11 @@
+from typing import List
+
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
-from database import get_db
+
 import models
 import schemas
-from typing import List
+from database import get_db
 
 router = APIRouter()
 
@@ -18,10 +20,10 @@ def search_pesticide(
     Pencarian menggunakan ILIKE (case-insensitive & partial match).
     """
     search_keyword = f"%{q}%"
-    
+
     # Query ke database dengan batas 10 hasil
     results = db.query(models.PesticideRegistry).filter(
         models.PesticideRegistry.nama_pestisida.ilike(search_keyword)
     ).limit(10).all()
-    
+
     return results

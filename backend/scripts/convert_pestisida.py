@@ -1,5 +1,6 @@
-import pandas as pd
 import json
+
+import pandas as pd
 
 df = pd.read_excel('pestisida_bersih.xlsx')
 
@@ -13,13 +14,13 @@ for index, row in df.iterrows():
     name = clean_val(row.get('Nama Produk'))
     if not name:
         continue
-        
+
     expiry = clean_val(row.get('Tanggal Berakhir'))
     # Very basic status check: if it has expiry it's likely active
     status = "aktif"
     if "cabut" in expiry.lower() or "dilarang" in expiry.lower() or "ilegal" in expiry.lower():
         status = "ilegal"
-    
+
     # We can truncate or clean Target Crop to save size
     target_crop = clean_val(row.get('Komoditas & Hama'))
     if len(target_crop) > 50:

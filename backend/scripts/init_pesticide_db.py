@@ -1,7 +1,8 @@
 import pandas as pd
-from sqlalchemy.orm import Session
-from database import SessionLocal, engine, Base
+
+from database import Base, SessionLocal, engine
 from models import PesticideRegistry
+
 
 def init_pesticide_db():
     print("Membaca file Excel pestisida_bersih.xlsx...")
@@ -23,19 +24,19 @@ def init_pesticide_db():
             return
 
         print(f"Memproses {len(df)} baris data...")
-        
+
         # Batch processing untuk efisiensi memori (penting karena 4000+ data bisa memperlambat)
         batch_size = 1000
         records = []
         count = 0
-        
+
         for index, row in df.iterrows():
             nama = str(row['Nama Produk']).strip() if pd.notna(row['Nama Produk']) else "Tidak Diketahui"
-            
+
             # Abaikan baris kosong
             if nama == "Tidak Diketahui" or nama == "" or nama.lower() == "nan":
                 continue
-                
+
             kategori = str(row['Jenis Pestisida']).strip() if pd.notna(row['Jenis Pestisida']) else None
             perusahaan = str(row['Nama Perusahaan']).strip() if pd.notna(row['Nama Perusahaan']) else None
             bahan_aktif = str(row['Bahan Aktif']).strip() if pd.notna(row['Bahan Aktif']) else None
@@ -48,7 +49,7 @@ def init_pesticide_db():
             )
             records.append(pes)
             count += 1
-            
+
             if count % batch_size == 0:
                 db.add_all(records)
                 db.commit()
@@ -60,10 +61,10 @@ def init_pesticide_db():
             db.add_all(records)
             db.commit()
             print(f"Tersimpan {count} baris...")
-            
+
         final_count = db.query(PesticideRegistry).count()
         print(f"Selesai! Berhasil menyimpan total {final_count} data pestisida ke database SQLite.")
-        
+
     except Exception as e:
         db.rollback()
         print(f"Terjadi kesalahan saat menyimpan ke database: {e}")

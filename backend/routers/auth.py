@@ -1,9 +1,12 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Header
-from sqlalchemy.orm import Session
+from typing import Optional
+
 import jwt
-from database import get_db
+from fastapi import APIRouter, Depends, Header, HTTPException, status
+from sqlalchemy.orm import Session
+
 import models
 import schemas
+from database import get_db
 from security import (
     create_access_token,
     decode_access_token,
@@ -11,7 +14,6 @@ from security import (
     is_password_hashed,
     verify_password,
 )
-from typing import Optional
 
 router = APIRouter()
 
@@ -65,7 +67,7 @@ def _user_info(user):
     }
 
 
-@router.post("/login")
+@router.post("/login", response_model=schemas.AuthResponse)
 def login(login_data: schemas.LoginRequest, db: Session = Depends(get_db)):
     """
     Autentikasi User (Petani / Dinas Pertanian).
@@ -104,7 +106,7 @@ def login(login_data: schemas.LoginRequest, db: Session = Depends(get_db)):
     }
 
 
-@router.post("/register")
+@router.post("/register", response_model=schemas.AuthResponse)
 def register(reg_data: schemas.RegisterRequest, db: Session = Depends(get_db)):
     """
     Registrasi user baru (role petani).
@@ -139,7 +141,7 @@ def register(reg_data: schemas.RegisterRequest, db: Session = Depends(get_db)):
     }
 
 
-@router.get("/me")
+@router.get("/me", response_model=schemas.UserResponse)
 def get_me(
     authorization: Optional[str] = Header(None),
     db: Session = Depends(get_db)

@@ -43,9 +43,6 @@
 
 <script setup>
 import { X } from 'lucide-vue-next'
-import { useI18n } from 'vue-i18n'
-
-const { t } = useI18n()
 
 defineProps({
   isOpen: Boolean,

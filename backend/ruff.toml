@@ -1,0 +1,8 @@
+# Konfigurasi ruff — linter & import sorter untuk backend Cocopra.id
+line-length = 120
+target-version = "py310"
+exclude = ["chroma_data", "__pycache__", ".venv", "venv"]
+
+[lint]
+select = ["E", "F", "W", "I"]
+ignore = ["E501"]

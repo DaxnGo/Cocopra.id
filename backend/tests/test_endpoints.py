@@ -1,19 +1,20 @@
 # ============================================================
-# COCOPRA.ID — Comprehensive API Test Suite (Sprint 6)
+# COCOPRA.ID - Comprehensive API Test Suite (Sprint 6)
 # ============================================================
 # Run: python -m pytest test_endpoints.py -v
 # ============================================================
 
-import pytest
-from fastapi.testclient import TestClient
-from datetime import datetime
-
 # Setup: Use test database (in-memory SQLite)
 import os
+from datetime import datetime, timezone
+
+import pytest
+from fastapi.testclient import TestClient
+
 os.environ["DATABASE_URL"] = "sqlite:///./test_cocopra.db"
 
+from database import Base, engine
 from main import app
-from database import engine, Base
 
 client = TestClient(app)
 
@@ -59,7 +60,7 @@ class TestHarga:
             "harga": harga,
             "lokasi": lokasi,
             "pembeli": pembeli,
-            "timestamp": datetime.utcnow().isoformat()
+            "timestamp": datetime.now(timezone.utc).isoformat()
         }
         return client.post("/api/harga/", json=payload)
 
@@ -70,21 +71,21 @@ class TestHarga:
         data = response.json()
         assert data["harga"] == 8500
         assert data["lokasi"] == "Desa Airmadidi"
-        assert data["is_anomaly"] == False
+        assert not data["is_anomaly"]
 
     def test_submit_harga_anomaly_high(self):
         """Harga terlalu tinggi (>15000) harus di-flag sebagai anomaly."""
         response = self._submit_harga(harga=20000)
         assert response.status_code == 200
         data = response.json()
-        assert data["is_anomaly"] == True
+        assert data["is_anomaly"]
 
     def test_submit_harga_anomaly_low(self):
         """Harga terlalu rendah (<5000) harus di-flag sebagai anomaly."""
         response = self._submit_harga(harga=2000)
         assert response.status_code == 200
         data = response.json()
-        assert data["is_anomaly"] == True
+        assert data["is_anomaly"]
 
     def test_get_harga_list(self):
         """GET /api/harga/ harus mengembalikan list."""
@@ -109,12 +110,11 @@ class TestHarga:
         assert "harga" in data[0]
 
     def test_get_harga_trend_empty(self):
-        """Trend harus mengembalikan mock data jika DB kosong."""
+        """Trend harus mengembalikan list kosong jika DB kosong (tanpa data palsu)."""
         response = client.get("/api/harga/trend")
         assert response.status_code == 200
         data = response.json()
-        assert isinstance(data, list)
-        assert len(data) == 7  # 7 mock data points
+        assert data == []
 
     def test_get_harga_median_with_data(self):
         """Median harus dihitung dari data di DB."""
@@ -130,13 +130,27 @@ class TestHarga:
         assert data["max"] == 10000
         assert data["source"] == "database"
 
-    def test_get_harga_median_empty(self):
-        """Median harus fallback ke mock jika DB kosong."""
+    def test_get_harga_median_even(self):
+        """Median dengan jumlah data genap harus dihitung dari 2 nilai tengah."""
+        self._submit_harga(harga=8000)
+        self._submit_harga(harga=9000)
+        self._submit_harga(harga=10000)
+        self._submit_harga(harga=11000)
         response = client.get("/api/harga/median")
         assert response.status_code == 200
         data = response.json()
-        assert data["source"] == "mock"
-        assert data["median"] == 8350
+        assert data["median"] == 9500
+        assert data["count"] == 4
+        assert data["source"] == "database"
+
+    def test_get_harga_median_empty(self):
+        """Tanpa data, median harus kosong yang jelas (bukan angka palsu)."""
+        response = client.get("/api/harga/median")
+        assert response.status_code == 200
+        data = response.json()
+        assert data["source"] == "empty"
+        assert data["count"] == 0
+        assert data["median"] is None
 
 
 # ============================================================
@@ -183,7 +197,7 @@ class TestGeo:
         """Setelah submit laporan, dashboard stats harus berubah."""
         # Get baseline
         dash_before = client.get("/api/geo/dashboard").json()
-        
+
         # Submit a report
         payload = {
             "jenis_laporan": "penyakit",
@@ -191,7 +205,7 @@ class TestGeo:
             "lokasi_desa": "Talawaan"
         }
         client.post("/api/geo/report", json=payload)
-        
+
         # Check dashboard updated
         dash_after = client.get("/api/geo/dashboard").json()
         assert dash_after["total_laporan_bulan_ini"] > dash_before["total_laporan_bulan_ini"]
@@ -204,19 +218,38 @@ class TestGeo:
 class TestPestScanner:
     def test_scan_without_api_key(self):
         """
-        Scan harus tetap menyimpan ke DB dan return response
-        meskipun Gemini API gagal (misalnya key tidak valid).
+        Tanpa GEMINI_API_KEY, scan harus ditolak dengan 503 yang jelas
+        (bukan mengembalikan hasil analisis palsu).
         """
         payload = {
             "image_data": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ==",
             "filename": "test_leaf.jpg",
-            "timestamp": datetime.utcnow().isoformat()
+            "timestamp": datetime.now(timezone.utc).isoformat()
         }
         response = client.post("/api/pest/scan", json=payload)
-        assert response.status_code == 200
-        data = response.json()
-        assert data["filename"] == "test_leaf.jpg"
-        assert data["status"] == "processed"
-        # result_label bisa berisi error message jika API key invalid, tapi harus ada
-        assert "result_label" in data
-        assert "confidence_score" in data
+        assert response.status_code == 503
+        assert "GEMINI_API_KEY" in response.json()["detail"]
+
+    def test_scan_invalid_image_format(self):
+        """Key tersedia tapi payload bukan data URL valid -> 400 (bukan hasil palsu)."""
+        import routers.pest as pest_module
+
+        class _FakeModels:
+            def generate_content(self, **kwargs):  # tidak boleh terpanggil
+                raise AssertionError("AI tidak boleh dipanggil untuk payload invalid")
+
+        class _FakeClient:
+            models = _FakeModels()
+
+        original = pest_module._gemini_client
+        pest_module._gemini_client = _FakeClient()
+        try:
+            payload = {
+                "image_data": "bukan-data-url",
+                "filename": "x.jpg",
+                "timestamp": datetime.now(timezone.utc).isoformat()
+            }
+            response = client.post("/api/pest/scan", json=payload)
+            assert response.status_code == 400
+        finally:
+            pest_module._gemini_client = original

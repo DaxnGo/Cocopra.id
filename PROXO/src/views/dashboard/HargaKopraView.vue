@@ -169,8 +169,22 @@
                 <CheckCircle class="w-3 h-3 shrink-0" />
                 Laporan berhasil dikirim! Terima kasih.
               </div>
+
+              <!-- Error state -->
+              <div v-if="reportError"
+                class="flex items-center gap-2 text-xs text-red-400 bg-red-900/20 border border-red-700/30 rounded-lg px-3 py-2">
+                <TriangleAlert class="w-3 h-3 shrink-0" />
+                {{ reportError }}
+              </div>
             </div>
           </div>
+        </div>
+
+        <!-- Notice: sebagian data masih contoh -->
+        <div v-if="usingSampleData"
+          class="flex items-center gap-2 text-xs text-amber-400 bg-amber-900/20 border border-amber-700/30 rounded-xl px-4 py-3 mb-4">
+          <TriangleAlert class="w-3.5 h-3.5 shrink-0" />
+          Sebagian data di halaman ini masih data contoh untuk demo — server backend belum terhubung.
         </div>
 
         <!-- LEDGER TABLE -->
@@ -287,6 +301,9 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Filler, 
 const sidebarOpen = ref(false)
 const activePeriod = ref('30H')
 const reportSubmitted = ref(false)
+const reportError = ref('')
+// true selama data di halaman masih berupa contoh (server belum terhubung / belum ada data live)
+const usingSampleData = ref(true)
 const lastUpdate = ref('5M AGO')
 
 const form = ref({
@@ -410,9 +427,11 @@ async function fetchLedger() {
           updatedAt: ts.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
         }
       })
+      usingSampleData.value = false
     }
   } catch (err) {
-    console.warn('fetchLedger fallback ke mock:', err.message)
+    usingSampleData.value = true
+    console.warn('fetchLedger gagal — menampilkan data contoh:', err.message)
   }
 }
 
@@ -422,9 +441,11 @@ async function fetchTrend() {
     const res = await api.get('/harga/trend')
     if (res.data && res.data.length > 0) {
       trendData.value = res.data
+      usingSampleData.value = false
     }
   } catch (err) {
-    console.warn('fetchTrend fallback ke mock chart:', err.message)
+    usingSampleData.value = true
+    console.warn('fetchTrend gagal — menampilkan grafik contoh:', err.message)
   }
 }
 
@@ -436,6 +457,7 @@ onMounted(() => {
 
 async function submitReport() {
   if (!form.value.collectorName || !form.value.price) return
+  reportError.value = ''
 
   try {
     const payload = {
@@ -466,19 +488,9 @@ async function submitReport() {
     fetchTrend()
   } catch (err) {
     console.error('submitReport error:', err)
-    // Fallback: simpan lokal saja
-    ledgerData.value.unshift({
-      id: Date.now(),
-      collector: form.value.collectorName,
-      region: form.value.location || 'Tidak diketahui',
-      price: Number(form.value.price),
-      quality: form.value.quality === 'A' ? 'Kualitas A' : form.value.quality === 'B' ? 'Standar (B)' : 'Basah (C)',
-      anomaly: Number(form.value.price) < 3500,
-      updatedAt: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
-    })
-    reportSubmitted.value = true
-    form.value = { collectorName: '', price: '', quality: 'A', location: '' }
-    setTimeout(() => reportSubmitted.value = false, 3000)
+    // Tampilkan error yang jelas — laporan TIDAK dibuat-buat secara lokal
+    reportError.value = err.response?.data?.detail
+      || 'Gagal mengirim laporan — server tidak terhubung. Coba lagi nanti.'
   }
 }
 </script>

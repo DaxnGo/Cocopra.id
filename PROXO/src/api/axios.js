@@ -30,8 +30,9 @@ api.interceptors.response.use(
     if (error.response?.status === 401 && !isAuthAttempt) {
       localStorage.removeItem('token')
       localStorage.removeItem('user')
+      // Navigasi lewat router tanpa reload penuh (dynamic import mencegah circular dependency)
       if (window.location.pathname !== '/') {
-        window.location.href = '/'
+        import('../router/index.js').then(({ default: router }) => router.push('/'))
       }
     }
     return Promise.reject(error)

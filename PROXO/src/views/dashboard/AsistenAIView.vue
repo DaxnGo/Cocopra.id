@@ -315,6 +315,23 @@ const chatHistory = ref([
   { id: 2, title: 'Standar kualitas kopra...' },
 ])
 
+// Escape HTML agar balasan server tidak bisa menyuntikkan skrip (anti-XSS)
+function escapeHtml(text) {
+  return String(text)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
+// Format balasan server jadi HTML aman: escape dulu, baru terapkan markdown sederhana
+function formatReply(rawText) {
+  return escapeHtml(rawText)
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\n/g, '<br/>')
+}
+
 async function sendMessage() {
   if (!inputMessage.value.trim() || isTyping.value) return
   const userMsg = inputMessage.value.trim()
@@ -334,7 +351,7 @@ async function sendMessage() {
       .slice(0, -1) // Jangan sertakan pesan terakhir (sudah jadi `message`)
       .map(m => ({
         role: m.role === 'ai' ? 'model' : 'user',
-        parts: m.content.replace(/<[^>]*>/g, '') // Strip HTML tags untuk history
+        parts: m.rawText || m.content // rawText = teks asli tanpa formatting/tag
       }))
 
     const res = await api.post('/assistant/chat', {
@@ -345,30 +362,27 @@ async function sendMessage() {
     const data = res.data
     isTyping.value = false
 
-    // Format reply — ganti newline dengan <br/> untuk tampilan HTML
-    const formattedReply = data.reply
-      .replace(/\n/g, '<br/>')
-      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-
     const source = data.regulatory_flag ? 'Peringatan Regulasi Terdeteksi' : null
 
     messages.value.push({
       id: Date.now() + 1,
       role: 'ai',
-      content: formattedReply,
+      content: formatReply(data.reply || ''),
+      rawText: data.reply || '',
       source: source,
     })
   } catch (err) {
-    console.error('Chat API error, fallback ke mock:', err)
+    console.error('Chat API error:', err)
     isTyping.value = false
 
-    // Fallback mock response
-    const fallbackResponse = getFallbackResponse(userMsg)
+    const detail = err.response?.data?.detail
+      || 'Tidak dapat menghubungi server AI. Periksa koneksi Anda dan coba lagi.'
     messages.value.push({
       id: Date.now() + 1,
       role: 'ai',
-      content: fallbackResponse.content,
-      source: fallbackResponse.source,
+      content: `<em class="text-amber-400">${escapeHtml(String(detail))}</em>`,
+      rawText: '',
+      source: null,
     })
   }
 
@@ -377,38 +391,6 @@ async function sendMessage() {
   }
 
   await scrollToBottom()
-}
-
-// Fallback jika API tidak tersedia
-function getFallbackResponse(question) {
-  const q = question.toLowerCase()
-  if (q.includes('brontispa') || q.includes('hama')) {
-    return {
-      content: `Berdasarkan <span class="text-amber-400 font-medium">SOP PHT Kelapa 2023</span>, penanganan hama meliputi:<br/><br/>
-      <ol class="list-decimal list-inside space-y-2">
-        <li><strong>Mekanis:</strong> Pemangkasan pelepah terserang.</li>
-        <li><strong>Hayati:</strong> Jamur entomopatogen <em class="text-emerald-400">Beauveria bassiana</em>.</li>
-        <li><strong>Kimiawi:</strong> Insektisida sistemik (Imidakloprid) 1-2 ml/liter air.</li>
-      </ol><br/><em class="text-gray-500 text-xs">[Mode Offline — Backend tidak tersedia]</em>`,
-      source: 'SOP PHT Kelapa 2023 (Offline Cache)'
-    }
-  }
-  if (q.includes('pupuk') || q.includes('npk')) {
-    return {
-      content: `Berdasarkan <span class="text-amber-400 font-medium">Panduan Balitka</span>, dosis pupuk NPK kelapa:<br/><br/>
-      <ul class="list-disc list-inside space-y-2">
-        <li><strong>Kelapa Muda (0-3 tahun):</strong> 500g NPK 15-15-15/pohon/tahun</li>
-        <li><strong>Kelapa Produktif (>3 tahun):</strong> 1-2 kg NPK 15-15-15/pohon/tahun</li>
-        <li><strong>Waktu:</strong> 2x setahun, awal & akhir musim hujan</li>
-      </ul><br/><em class="text-gray-500 text-xs">[Mode Offline — Backend tidak tersedia]</em>`,
-      source: 'Panduan Teknis Pemupukan Kelapa, Balitka 2022 (Offline Cache)'
-    }
-  }
-  return {
-    content: `Maaf, saya tidak dapat menghubungi server AI saat ini. Silakan periksa koneksi Anda atau coba lagi nanti.<br/><br/>
-    <em class="text-gray-500 text-xs">[Mode Offline — Backend tidak tersedia]</em>`,
-    source: null
-  }
 }
 
 function askQuestion(q) {

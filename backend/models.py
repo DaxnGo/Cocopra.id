@@ -1,14 +1,22 @@
-from sqlalchemy import Column, Integer, String, Float, Boolean, DateTime
-from datetime import datetime
+from datetime import datetime, timezone
+
+from sqlalchemy import Boolean, Column, DateTime, Float, Integer, String
+
 from database import Base
+
+
+def utcnow_naive() -> datetime:
+    """Waktu UTC tanpa timezone (naive) untuk kolom DateTime — pengganti datetime.utcnow()."""
+    return datetime.now(timezone.utc).replace(tzinfo=None)
+
 
 class User(Base):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String, unique=True, index=True, nullable=False)
-    password_hash = Column(String, nullable=False) # In real app, this MUST be hashed
-    role = Column(String, nullable=False) # "petani" or "dinas"
+    password_hash = Column(String, nullable=False)  # hash bcrypt, jangan pernah simpan plaintext
+    role = Column(String, nullable=False)  # "petani" or "dinas"
     nama_lengkap = Column(String, nullable=True)
     email = Column(String, nullable=True)
     phone = Column(String, nullable=True)
@@ -18,12 +26,12 @@ class PestScanLog(Base):
     __tablename__ = "pest_scan_logs"
 
     id = Column(Integer, primary_key=True, index=True)
-    image_data = Column(String, nullable=False) # In real prod, this stores object storage URL
+    image_data = Column(String, nullable=False)  # In real prod, this stores object storage URL
     filename = Column(String, nullable=False)
     result_label = Column(String, nullable=True)
     confidence_score = Column(Float, nullable=True)
-    status = Column(String, default="pending") # pending, processed, failed
-    timestamp = Column(DateTime, default=datetime.utcnow)
+    status = Column(String, default="pending", index=True)  # pending, processing, processed, failed
+    timestamp = Column(DateTime, default=utcnow_naive, index=True)
 
 class HargaLog(Base):
     __tablename__ = "harga_logs"
@@ -33,7 +41,7 @@ class HargaLog(Base):
     lokasi = Column(String, nullable=False)
     pembeli = Column(String, nullable=True)
     is_anomaly = Column(Boolean, default=False)
-    timestamp = Column(DateTime, default=datetime.utcnow)
+    timestamp = Column(DateTime, default=utcnow_naive, index=True)
 
 class GeoAlertLog(Base):
     __tablename__ = "geo_alert_logs"
@@ -44,12 +52,12 @@ class GeoAlertLog(Base):
     latitude = Column(Float, nullable=True)
     longitude = Column(Float, nullable=True)
     lokasi_desa = Column(String, nullable=False)
-    status = Column(String, default="pending")  # pending, verified, resolved
-    timestamp = Column(DateTime, default=datetime.utcnow)
+    status = Column(String, default="pending", index=True)  # pending, verified, resolved
+    timestamp = Column(DateTime, default=utcnow_naive, index=True)
 
 class PesticideRegistry(Base):
     __tablename__ = "pesticide_registry"
-    
+
     id = Column(Integer, primary_key=True, index=True)
     nama_pestisida = Column(String, index=True, nullable=False)
     kategori = Column(String, index=True, nullable=True)

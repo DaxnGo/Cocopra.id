@@ -1,6 +1,8 @@
-from pydantic import BaseModel, Field
-from typing import Optional
 from datetime import datetime
+from typing import Optional
+
+from pydantic import BaseModel, ConfigDict, Field
+
 
 # --- Pest Scanner Schemas ---
 class PestScanCreate(BaseModel):
@@ -9,14 +11,13 @@ class PestScanCreate(BaseModel):
     timestamp: datetime
 
 class PestScanResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: int
     filename: str
     status: str
     result_label: Optional[str] = None
     confidence_score: Optional[float] = None
-    
-    class Config:
-        from_attributes = True
 
 # --- Info Harga Schemas ---
 class HargaCreate(BaseModel):
@@ -26,27 +27,20 @@ class HargaCreate(BaseModel):
     timestamp: datetime
 
 class HargaResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: int
     harga: int
     lokasi: str
     pembeli: Optional[str] = None
     is_anomaly: bool
     timestamp: datetime
-    
-    class Config:
-        from_attributes = True
 
 # --- Auth Schemas ---
 class LoginRequest(BaseModel):
     username: Optional[str] = None
     email: Optional[str] = None
     password: str
-
-class LoginResponse(BaseModel):
-    access_token: str
-    token_type: str
-    role: str
-    nama_lengkap: str
 
 # Frontend-compatible auth response format
 class UserInfo(BaseModel):
@@ -82,11 +76,10 @@ class ChangePasswordRequest(BaseModel):
 
 # --- Regulatory Schemas ---
 class PesticideResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: int
     nama_pestisida: str
     kategori: Optional[str] = None
     nama_perusahaan: Optional[str] = None
     bahan_aktif: Optional[str] = None
-    
-    class Config:
-        from_attributes = True

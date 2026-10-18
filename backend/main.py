@@ -2,19 +2,19 @@
 # COCOPRA.ID — FastAPI Backend Entry Point
 # ============================================================
 
+import os
 from contextlib import asynccontextmanager
 
+from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from dotenv import load_dotenv
-import os
 
 # Load environment variables DULU, sebelum import modul yang membaca env saat import
 load_dotenv()
 
-from database import engine, Base, SessionLocal  # noqa: E402
 import models  # noqa: E402
-from routers import pest, harga, assistant, geo, auth, regulatory  # noqa: E402
+from database import Base, SessionLocal, engine  # noqa: E402
+from routers import assistant, auth, geo, harga, pest, regulatory  # noqa: E402
 from security import hash_password  # noqa: E402
 
 APP_VERSION = "1.0.0-mvp"

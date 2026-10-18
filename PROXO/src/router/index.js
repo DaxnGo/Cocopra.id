@@ -60,7 +60,7 @@ const router = createRouter({
       meta: { title: 'Halaman Tidak Ditemukan — Cocopra.id' }
     },
   ],
-  scrollBehavior(to, from, savedPosition) {
+  scrollBehavior(to, _from, _savedPosition) {
     if (to.hash) {
       return { el: to.hash, behavior: 'smooth', top: 80 }
     }

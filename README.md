@@ -8,6 +8,7 @@
 
 [![Vue.js](https://img.shields.io/badge/Vue.js-3.x-4FC08D?style=flat&logo=vue.js)](https://vuejs.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688?style=flat&logo=fastapi)](https://fastapi.tiangolo.com/)
+[![CI](https://github.com/DaxnGo/Cocopra.id/actions/workflows/ci.yml/badge.svg)](https://github.com/DaxnGo/Cocopra.id/actions/workflows/ci.yml)
 [![Vite](https://img.shields.io/badge/Vite-8.x-646CFF?style=flat&logo=vite)](https://vitejs.dev/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.x-38BDF8?style=flat&logo=tailwindcss)](https://tailwindcss.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
@@ -50,7 +51,7 @@ _Team Trio Nyawit UVICS — Universitas Klabat, Sulawesi Utara_
 | 🤖 **RAG Agri-Assistant** | LLM chatbot grounded in official Ministry of Agriculture documents | ✅ |
 | ✅ **Regulatory Check** | Instant pesticide legality verification from official database | ✅ |
 | 📊 **Dashboard Petani** | Personalized dashboard for farmers with activity feed & price widget | ✅ |
-| 🔐 **Auth System** | Secure login/register with role-based access (Farmer / Agriculture Agency) | ✅ |
+| 🔐 **Auth System** | Secure login/register with bcrypt password hashing + JWT tokens, role-based access (Farmer / Agriculture Agency) | ✅ |
 | 🌐 **Bilingual EN/ID** | Full English & Indonesian language support via vue-i18n | ✅ |
 | 📱 **Responsive Design** | Optimized for Desktop, Tablet, and Mobile | ✅ |
 | 🔌 **Offline-First PWA** | Works without internet, syncs when connection is available | 🚧 |
@@ -80,7 +81,8 @@ _Team Trio Nyawit UVICS — Universitas Klabat, Sulawesi Utara_
 | Python + FastAPI | REST API server |
 | SQLite | Local database |
 | ChromaDB | Vector store for RAG |
-| Google Gemini API | AI pest detection & assistant |
+| Google Gemini API (`google-genai` SDK) | AI pest detection & assistant |
+| bcrypt + PyJWT | Password hashing & session tokens |
 
 ---
 
@@ -109,21 +111,22 @@ Cocopra.id/
 ├── backend/                  # ⚙️ Backend (Python + FastAPI)
 │   ├── routers/              #    API route handlers
 │   │   ├── assistant.py      #    RAG AI assistant
-│   │   ├── auth.py           #    Authentication
+│   │   ├── auth.py           #    Authentication (bcrypt + JWT)
 │   │   ├── geo.py            #    Geo-Alert EWS
 │   │   ├── harga.py          #    Copra price API
 │   │   ├── pest.py           #    Pest scanner API
 │   │   └── regulatory.py     #    Regulatory check
 │   ├── data/                 #    Reference data files
-│   ├── scripts/              #    Utility scripts
+│   ├── scripts/              #    Utility & manual test scripts
+│   ├── tests/                #    pytest suite (conftest + endpoint & security tests)
 │   ├── main.py               #    FastAPI app entry
 │   ├── models.py             #    Database models
 │   ├── schemas.py            #    Pydantic schemas
 │   ├── database.py           #    DB connection
+│   ├── security.py           #    bcrypt hashing + JWT helpers
 │   ├── rag_engine.py         #    RAG pipeline
+│   ├── gemini_embeddings.py  #    Gemini embedding function for ChromaDB
 │   └── requirements.txt      #    Python dependencies
-│
-├── frontend/                 # 📦 Legacy React frontend (reference)
 │
 ├── run_all.bat               # ▶️  Start both servers
 ├── run_backend.bat           # ▶️  Start backend only
@@ -168,8 +171,35 @@ npm run dev
 ```bash
 cd backend
 pip install -r requirements.txt
+
+# Siapkan environment (.env) — wajib untuk auth & fitur AI
+copy .env.example .env        # Windows  (Linux/macOS: cp .env.example .env)
+# lalu isi GEMINI_API_KEY dan JWT_SECRET_KEY di file .env
+
+# Sekali saja: bangun vector store untuk RAG assistant
+python rag_engine.py
+
 uvicorn main:app --reload --host 0.0.0.0 --port 8000
 # API at http://localhost:8000/docs
+```
+
+> **Catatan keamanan:** `JWT_SECRET_KEY` minimal 32 karakter dan **berbeda** antara
+> pengembangan lokal dan server produksi. Password user disimpan sebagai hash bcrypt,
+> dan token sesi memakai JWT dengan masa berlaku (default 24 jam).
+
+### Development (Lint & Test)
+
+```bash
+# Backend — linter + test suite
+cd backend
+pip install -r requirements-dev.txt
+ruff check .
+pytest tests -q
+
+# Frontend — linter + build
+cd PROXO
+npm run lint
+npm run build
 ```
 
 ---

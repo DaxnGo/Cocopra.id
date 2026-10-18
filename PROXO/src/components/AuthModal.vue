@@ -54,17 +54,6 @@
                 {{ authStore.loading ? 'Memproses...' : $t('auth.loginBtn') }}
               </button>
               <p v-if="errorMsg" class="text-red-400 text-xs text-center -mt-2">{{ errorMsg }}</p>
-              <div class="relative flex items-center gap-3">
-                <div class="flex-1 h-px bg-gray-200"></div>
-                <span class="text-xs text-gray-400 whitespace-nowrap">{{ $t('auth.orLoginWith') }}</span>
-                <div class="flex-1 h-px bg-gray-200"></div>
-              </div>
-              <!-- Google login disembunyikan sementara (Coming Soon) -->
-              <button disabled
-                class="w-full border border-gray-200 rounded-xl py-3 text-sm font-medium text-gray-300 flex items-center justify-center gap-2 cursor-not-allowed opacity-50">
-                <img src="https://www.google.com/favicon.ico" class="w-4 h-4 opacity-50" />
-                {{ $t('auth.loginGoogle') }} (Coming Soon)
-              </button>
               <p class="text-center text-xs text-gray-500">
                 {{ $t('auth.noAccount') }}
                 <button @click="step = 'register'" class="text-amber-500 hover:text-amber-600 font-medium">
@@ -111,17 +100,6 @@
                 {{ authStore.loading ? 'Memproses...' : $t('auth.registerBtn') }}
               </button>
               <p v-if="errorMsg" class="text-red-400 text-xs text-center -mt-2">{{ errorMsg }}</p>
-              <div class="relative flex items-center gap-3">
-                <div class="flex-1 h-px bg-gray-200"></div>
-                <span class="text-xs text-gray-400 whitespace-nowrap">{{ $t('auth.orRegisterWith') }}</span>
-                <div class="flex-1 h-px bg-gray-200"></div>
-              </div>
-              <!-- Google register disembunyikan sementara (Coming Soon) -->
-              <button disabled
-                class="w-full border border-gray-200 rounded-xl py-3 text-sm font-medium text-gray-300 flex items-center justify-center gap-2 cursor-not-allowed opacity-50">
-                <img src="https://www.google.com/favicon.ico" class="w-4 h-4 opacity-50" />
-                {{ $t('auth.registerGoogle') }} (Coming Soon)
-              </button>
               <p class="text-center text-xs text-gray-500">
                 {{ $t('auth.hasAccount') }}
                 <button @click="step = 'login'" class="text-amber-500 hover:text-amber-600 font-medium">
@@ -226,12 +204,10 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '../stores/auth'
 import { useRouter } from 'vue-router'
-import { X, Eye, EyeOff, ArrowLeft, CheckCircle } from 'lucide-vue-next'
+import { X, Eye, EyeOff, CheckCircle } from 'lucide-vue-next'
 
-const { t } = useI18n()
 const authStore = useAuthStore()
 const router = useRouter()
 
@@ -298,13 +274,6 @@ async function handleRegister() {
     router.push('/dashboard')
   } else {
     errorMsg.value = result.message
-  }
-}
-
-function focusNext(e, index) {
-  if (e.target.value && index < 6) {
-    const inputs = e.target.parentElement.querySelectorAll('input')
-    inputs[index]?.focus()
   }
 }
 

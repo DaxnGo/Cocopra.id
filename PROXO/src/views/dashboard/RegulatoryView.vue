@@ -199,11 +199,9 @@ import { ref, onMounted, watch } from 'vue'
 import { Search, ShieldCheck, CheckCircle, TriangleAlert, XCircle, X, History, FileText } from 'lucide-vue-next'
 import DashboardSidebar from '../../components/dashboard/DashboardSidebar.vue'
 import DashboardHeader from '../../components/dashboard/DashboardHeader.vue'
-import api from '../../api/axios.js'
 
 const sidebarOpen = ref(false)
 const searchQuery = ref('')
-const searchResult = ref(null)
 const isSearching = ref(false)
 
 const stats = [

@@ -474,10 +474,10 @@ async function startAnalysis() {
     })
   } catch (err) {
     console.error('Scan error:', err)
-    // Fallback: tampilkan pesan error
+    // Tampilkan pesan error yang jelas (tanpa hasil palsu)
     scanResult.value = {
       latinName: 'Error',
-      commonName: 'Gagal menghubungi server analisis',
+      commonName: err.response?.data?.detail || 'Gagal menghubungi server analisis',
       severity: 'SEDANG',
       confidence: 0,
       actions: ['Periksa koneksi internet', 'Pastikan backend server berjalan', 'Coba lagi beberapa saat'],

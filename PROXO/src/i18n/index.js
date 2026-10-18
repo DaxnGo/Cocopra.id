@@ -6,7 +6,7 @@ const i18n = createI18n({
   legacy: false,
   locale: 'id',
   fallbackLocale: 'en',
-  messages: { id, en }
+  messages: { id, en },
 })
 
 export default i18n

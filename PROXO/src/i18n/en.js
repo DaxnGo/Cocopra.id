@@ -34,36 +34,44 @@ export default {
   },
   features: {
     scanner: 'AI Scanner',
-    scannerDesc: 'Instantly identify pests and diseases just by pointing your phone camera at the plant.',
+    scannerDesc:
+      'Instantly identify pests and diseases just by pointing your phone camera at the plant.',
     price: 'Real-time Pricing',
     priceDesc: 'Monitor copra price fluctuations across regions transparently for maximum profit.',
     warning: 'Early Warning',
-    warningDesc: 'An interactive digital map that monitors pest spread risks around your plantation.',
+    warningDesc:
+      'An interactive digital map that monitors pest spread risks around your plantation.',
   },
   challenge: {
     title: 'Key Challenges in',
     titleHighlight: 'Coconut Plantations',
     desc: 'Classic problems hindering coconut farmer productivity now have integrated digital solutions.',
     pest: 'Undetected Pests',
-    pestDesc: 'Rhinoceros Beetle attacks are often realized too late, permanently damaging plant growth points.',
+    pestDesc:
+      'Rhinoceros Beetle attacks are often realized too late, permanently damaging plant growth points.',
     price: 'Opaque Pricing',
-    priceDesc: 'Long supply chains and lack of local price data weaken farmers bargaining position.',
+    priceDesc:
+      'Long supply chains and lack of local price data weaken farmers bargaining position.',
     regulation: 'Pesticide Regulations',
-    regulationDesc: 'Difficulty accessing official government guidelines on safe and sustainable pesticide use.',
+    regulationDesc:
+      'Difficulty accessing official government guidelines on safe and sustainable pesticide use.',
   },
   advantage: {
     scannerBadge: 'Featured Scanner',
     scannerTitle: 'Pest-Vision Scanner',
-    scannerDesc: 'Using the most advanced CNN architecture with 98.4% accuracy. Equipped with Offline Mode for identification directly in the field without internet.',
+    scannerDesc:
+      'Using the most advanced CNN architecture with 98.4% accuracy. Equipped with Offline Mode for identification directly in the field without internet.',
     check1: 'Real-time On-device Processing',
     check2: 'Database of 50+ Coconut Pest Types',
     ledgerBadge: 'Economic Transparency',
     ledgerTitle: 'Fair-Price Ledger',
-    ledgerDesc: 'Monitor copra prices transparently from local collectors to the global market. We provide historical data to help you determine the best time to sell.',
+    ledgerDesc:
+      'Monitor copra prices transparently from local collectors to the global market. We provide historical data to help you determine the best time to sell.',
     ledgerBtn: 'Explore Ledger',
     ragBadge: 'Smart Assistant',
     ragTitle: 'RAG Agri-Assistant',
-    ragDesc: 'An LLM-based AI chatbot grounded in official Ministry of Agriculture documents and agricultural journals. Get instant technical solutions for coconut cultivation.',
+    ragDesc:
+      'An LLM-based AI chatbot grounded in official Ministry of Agriculture documents and agricultural journals. Get instant technical solutions for coconut cultivation.',
   },
   flow: {
     title: 'Smart',
@@ -73,7 +81,8 @@ export default {
     step2: 'AI Analysis',
     step2Desc: 'Our system processes the image instantly even without a cellular signal.',
     step3: 'Recommendation',
-    step3Desc: 'Receive step-by-step guidance according to GAP (Good Agricultural Practices) standards.',
+    step3Desc:
+      'Receive step-by-step guidance according to GAP (Good Agricultural Practices) standards.',
   },
   faq: {
     title: 'Frequently',
@@ -99,13 +108,17 @@ export default {
   },
   error: {
     notFound: 'Page Not Found',
-    notFoundDesc: 'Looks like the connection to the farm was lost. The page you are looking for does not exist or has been moved.',
+    notFoundDesc:
+      'Looks like the connection to the farm was lost. The page you are looking for does not exist or has been moved.',
     serverError: 'System Error Occurred',
-    serverErrorDesc: 'Our server is experiencing technical issues. Our team is working hard to fix it.',
+    serverErrorDesc:
+      'Our server is experiencing technical issues. Our team is working hard to fix it.',
     maintenance: 'Farm Under Maintenance',
-    maintenanceDesc: 'We are updating our system to provide a better experience. Please try again later.',
+    maintenanceDesc:
+      'We are updating our system to provide a better experience. Please try again later.',
     forbidden: 'Access Denied',
-    forbiddenDesc: 'You do not have permission to access this page. Please make sure you are logged in with the correct account.',
+    forbiddenDesc:
+      'You do not have permission to access this page. Please make sure you are logged in with the correct account.',
     backHome: 'Back to Home',
     report: 'Report an Issue',
     retry: 'Try Again',
@@ -120,7 +133,8 @@ export default {
   },
   chat: {
     userMsg: 'How to control Brontispa on coconut trees?',
-    aiMsg: 'Based on the Ministry of Agriculture Technical Guide, the first step is releasing the parasitoid',
+    aiMsg:
+      'Based on the Ministry of Agriculture Technical Guide, the first step is releasing the parasitoid',
     placeholder: 'Ask something...',
     quote: '"How to control Brontispa long-term on coconut seedlings?"',
     recommendation: 'Recommendation: Natural predator',
@@ -202,16 +216,17 @@ export default {
 
     // Success
     successTitle: 'Password Successfully Changed!',
-    successDesc: 'Your password has been successfully updated. Please sign in with your new password.',
+    successDesc:
+      'Your password has been successfully updated. Please sign in with your new password.',
     backToLoginBtn: 'Back to Login',
 
     // Branding
     brandTagline: 'The Future of Sustainable Coconut Agriculture',
     brandPowered: 'POWERED BY AI',
   },
-  
+
   video: {
     caption: 'AI Agritech Platform for Coconut Farmers in North Sulawesi',
     close: 'Close',
-  }
+  },
 }

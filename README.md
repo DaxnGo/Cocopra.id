@@ -94,7 +94,8 @@ Cocopra.id/
 │   ├── public/               #    Static assets & logo
 │   ├── src/
 │   │   ├── components/       #    Reusable Vue components
-│   │   │   └── dashboard/    #    Dashboard-specific components
+│   │   │   ├── dashboard/    #    Dashboard-specific components
+│   │   │   └── home/         #    Landing page sections (hero, fitur, FAQ, dll.)
 │   │   ├── views/            #    Page views
 │   │   │   └── dashboard/    #    Dashboard views
 │   │   ├── api/              #    Axios API client
@@ -196,9 +197,10 @@ pip install -r requirements-dev.txt
 ruff check .
 pytest tests -q
 
-# Frontend — linter + build
+# Frontend — linter, format, build
 cd PROXO
 npm run lint
+npm run format        # Prettier: rapikan format seluruh kode
 npm run build
 ```
 

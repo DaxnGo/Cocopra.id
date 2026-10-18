@@ -34,36 +34,45 @@ export default {
   },
   features: {
     scanner: 'AI Scanner',
-    scannerDesc: 'Identifikasi hama dan penyakit secara instan hanya dengan mengarahkan kamera ponsel Anda.',
+    scannerDesc:
+      'Identifikasi hama dan penyakit secara instan hanya dengan mengarahkan kamera ponsel Anda.',
     price: 'Harga Real-time',
-    priceDesc: 'Pantau fluktuasi harga kopra di berbagai daerah secara transparan untuk keuntungan maksimal.',
+    priceDesc:
+      'Pantau fluktuasi harga kopra di berbagai daerah secara transparan untuk keuntungan maksimal.',
     warning: 'Early Warning',
-    warningDesc: 'Peta digital interaktif yang memantau risiko penyebaran hama di sekitar perkebanan Anda.',
+    warningDesc:
+      'Peta digital interaktif yang memantau risiko penyebaran hama di sekitar perkebanan Anda.',
   },
   challenge: {
     title: 'Tantangan Utama di',
     titleHighlight: 'Perkebunan Kelapa',
     desc: 'Masalah klasik yang menghambat produktivitas petani kelapa kini memiliki solusi digital terintegrasi.',
     pest: 'Hama Tak Terdeteksi',
-    pestDesc: 'Serangan Kumbang Badak sering terlambat disadari hingga merusak titik tumbuh tanaman secara permanen.',
+    pestDesc:
+      'Serangan Kumbang Badak sering terlambat disadari hingga merusak titik tumbuh tanaman secara permanen.',
     price: 'Harga Tidak Transparan',
-    priceDesc: 'Rantai pasok panjang dan kurangnya akses data harga lokal membuat posisi tawar petani menjadi lemah.',
+    priceDesc:
+      'Rantai pasok panjang dan kurangnya akses data harga lokal membuat posisi tawar petani menjadi lemah.',
     regulation: 'Regulasi Pestisida',
-    regulationDesc: 'Kesulitan mengakses panduan resmi pemerintah tentang penggunaan pestisida yang aman dan berkelanjutan.',
+    regulationDesc:
+      'Kesulitan mengakses panduan resmi pemerintah tentang penggunaan pestisida yang aman dan berkelanjutan.',
   },
   advantage: {
     scannerBadge: 'Scanner Unggulan',
     scannerTitle: 'Pest-Vision Scanner',
-    scannerDesc: 'Menggunakan arsitektur CNN tercanggih dengan akurasi 98.4%. Dilengkapi dengan Offline Mode yang memungkinkan identifikasi langsung di tengah perkebunan tanpa koneksi internet.',
+    scannerDesc:
+      'Menggunakan arsitektur CNN tercanggih dengan akurasi 98.4%. Dilengkapi dengan Offline Mode yang memungkinkan identifikasi langsung di tengah perkebunan tanpa koneksi internet.',
     check1: 'Real-time On-device Processing',
     check2: 'Database 50+ Jenis Hama Kelapa',
     ledgerBadge: 'Transparansi Ekonomi',
     ledgerTitle: 'Adil-Harga Ledger',
-    ledgerDesc: 'Pantau harga kopra secara transparan di tingkat pengepul lokal hingga pasar global. Kami menyediakan data historis untuk membantu Anda menentukan waktu jual terbaik.',
+    ledgerDesc:
+      'Pantau harga kopra secara transparan di tingkat pengepul lokal hingga pasar global. Kami menyediakan data historis untuk membantu Anda menentukan waktu jual terbaik.',
     ledgerBtn: 'Pelajari Ledger',
     ragBadge: 'Asisten Cerdas',
     ragTitle: 'RAG Agri-Assistant',
-    ragDesc: 'Chatbot AI berbasis LLM yang di-grounded dengan dokumen resmi Kementan dan jurnal agrikultur. Dapatkan solusi teknis budidaya kelapa secara instan.',
+    ragDesc:
+      'Chatbot AI berbasis LLM yang di-grounded dengan dokumen resmi Kementan dan jurnal agrikultur. Dapatkan solusi teknis budidaya kelapa secara instan.',
   },
   flow: {
     title: 'Alur Kerja',
@@ -73,7 +82,8 @@ export default {
     step2: 'AI Analisis',
     step2Desc: 'Sistem kami memproses gambar secara instan bahkan tanpa sinyal seluler.',
     step3: 'Rekomendasi',
-    step3Desc: 'Terima panduan langkah demi langkah sesuai standar GAP (Good Agricultural Practices).',
+    step3Desc:
+      'Terima panduan langkah demi langkah sesuai standar GAP (Good Agricultural Practices).',
   },
   faq: {
     title: 'Pertanyaan',
@@ -99,13 +109,17 @@ export default {
   },
   error: {
     notFound: 'Halaman Tidak Ditemukan',
-    notFoundDesc: 'Sepertinya koneksi ke kebun terputus. Halaman yang Anda cari tidak ada atau telah dipindahkan.',
+    notFoundDesc:
+      'Sepertinya koneksi ke kebun terputus. Halaman yang Anda cari tidak ada atau telah dipindahkan.',
     serverError: 'Terjadi Gangguan Sistem',
-    serverErrorDesc: 'Server kami sedang mengalami gangguan teknis. Tim kami sudah bekerja keras untuk memperbaikinya.',
+    serverErrorDesc:
+      'Server kami sedang mengalami gangguan teknis. Tim kami sudah bekerja keras untuk memperbaikinya.',
     maintenance: 'Kebun Sedang Dalam Perawatan',
-    maintenanceDesc: 'Kami sedang melakukan pembaruan sistem untuk memberikan pengalaman yang lebih baik. Mohon coba kembali nanti.',
+    maintenanceDesc:
+      'Kami sedang melakukan pembaruan sistem untuk memberikan pengalaman yang lebih baik. Mohon coba kembali nanti.',
     forbidden: 'Akses Ditolak',
-    forbiddenDesc: 'Anda tidak memiliki izin untuk mengakses halaman ini. Pastikan Anda sudah masuk dengan akun yang benar.',
+    forbiddenDesc:
+      'Anda tidak memiliki izin untuk mengakses halaman ini. Pastikan Anda sudah masuk dengan akun yang benar.',
     backHome: 'Kembali ke Beranda',
     report: 'Laporkan Masalah',
     retry: 'Coba Lagi',
@@ -202,7 +216,8 @@ export default {
 
     // Success
     successTitle: 'Password Berhasil Diubah!',
-    successDesc: 'Password Anda telah berhasil diperbarui. Silakan masuk dengan password baru Anda.',
+    successDesc:
+      'Password Anda telah berhasil diperbarui. Silakan masuk dengan password baru Anda.',
     backToLoginBtn: 'Kembali ke Login',
 
     // Branding
@@ -210,11 +225,8 @@ export default {
     brandPowered: 'POWERED BY AI',
   },
 
-   video: {
+  video: {
     caption: 'Platform Agritech AI untuk Petani Kelapa Sulawesi Utara',
     close: 'Tutup',
-  }
-
-  
-  
+  },
 }

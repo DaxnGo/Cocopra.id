@@ -17,35 +17,31 @@
       </div>
 
       <!-- MENU DESKTOP -->
-      <div
-        class="hidden md:flex items-center gap-6 lg:gap-8 text-sm text-gray-300"
-      >
-        <RouterLink to="/" class="hover:text-white transition">{{
-          $t("nav.home")
-        }}</RouterLink>
+      <div class="hidden md:flex items-center gap-6 lg:gap-8 text-sm text-gray-300">
+        <RouterLink to="/" class="hover:text-white transition">{{ $t('nav.home') }}</RouterLink>
         <a
           href="#tantangan"
           @click.prevent="scrollTo('#tantangan')"
           class="hover:text-white transition cursor-pointer"
-          >{{ $t("nav.challenge") }}</a
+          >{{ $t('nav.challenge') }}</a
         >
         <a
           href="#keunggulan"
           @click.prevent="scrollTo('#keunggulan')"
           class="hover:text-white transition cursor-pointer"
-          >{{ $t("nav.advantage") }}</a
+          >{{ $t('nav.advantage') }}</a
         >
         <a
           href="#alur"
           @click.prevent="scrollTo('#alur')"
           class="hover:text-white transition cursor-pointer"
-          >{{ $t("nav.flow") }}</a
+          >{{ $t('nav.flow') }}</a
         >
         <a
           href="#faq"
           @click.prevent="scrollTo('#faq')"
           class="hover:text-white transition cursor-pointer"
-          >{{ $t("nav.faq") }}</a
+          >{{ $t('nav.faq') }}</a
         >
       </div>
 
@@ -53,11 +49,7 @@
       <div class="hidden md:flex items-center gap-3 shrink-0">
         <button
           @click="switchLang('en')"
-          :class="
-            locale === 'en'
-              ? 'text-white font-semibold'
-              : 'text-gray-400 hover:text-white'
-          "
+          :class="locale === 'en' ? 'text-white font-semibold' : 'text-gray-400 hover:text-white'"
           class="text-sm transition cursor-pointer"
         >
           EN
@@ -65,27 +57,21 @@
         <span class="text-gray-600">|</span>
         <button
           @click="switchLang('id')"
-          :class="
-            locale === 'id'
-              ? 'text-white font-semibold'
-              : 'text-gray-400 hover:text-white'
-          "
+          :class="locale === 'id' ? 'text-white font-semibold' : 'text-gray-400 hover:text-white'"
           class="text-sm transition cursor-pointer"
         >
           ID
         </button>
-        <button @click="showAuth = true"
+        <button
+          @click="showAuth = true"
           class="bg-amber-500 hover:bg-amber-400 text-black font-semibold px-4 py-2 rounded-full text-sm transition whitespace-nowrap"
         >
-          {{ $t("nav.start") }}
+          {{ $t('nav.start') }}
         </button>
       </div>
 
       <!-- HAMBURGER -->
-      <button
-        class="md:hidden text-white p-2 shrink-0"
-        @click="menuOpen = !menuOpen"
-      >
+      <button class="md:hidden text-white p-2 shrink-0" @click="menuOpen = !menuOpen">
         <Menu v-if="!menuOpen" class="w-6 h-6" />
         <X v-else class="w-6 h-6" />
       </button>
@@ -101,46 +87,32 @@
         to="/"
         class="text-gray-300 hover:text-white text-sm transition"
         @click="menuOpen = false"
-        >{{ $t("nav.home") }}</RouterLink
+        >{{ $t('nav.home') }}</RouterLink
       >
       <a
-        @click="
-          scrollTo('#tantangan');
-          menuOpen = false;
-        "
+        @click="navTo('#tantangan')"
         class="text-gray-300 hover:text-white text-sm transition cursor-pointer"
-        >{{ $t("nav.challenge") }}</a
+        >{{ $t('nav.challenge') }}</a
       >
       <a
-        @click="
-          scrollTo('#keunggulan');
-          menuOpen = false;
-        "
+        @click="navTo('#keunggulan')"
         class="text-gray-300 hover:text-white text-sm transition cursor-pointer"
-        >{{ $t("nav.advantage") }}</a
+        >{{ $t('nav.advantage') }}</a
       >
       <a
-        @click="
-          scrollTo('#alur');
-          menuOpen = false;
-        "
+        @click="navTo('#alur')"
         class="text-gray-300 hover:text-white text-sm transition cursor-pointer"
-        >{{ $t("nav.flow") }}</a
+        >{{ $t('nav.flow') }}</a
       >
       <a
-        @click="
-          scrollTo('#faq');
-          menuOpen = false;
-        "
+        @click="navTo('#faq')"
         class="text-gray-300 hover:text-white text-sm transition cursor-pointer"
-        >{{ $t("nav.faq") }}</a
+        >{{ $t('nav.faq') }}</a
       >
       <div class="flex items-center gap-3 pt-2 border-t border-white/10">
         <button
           @click="switchLang('en')"
-          :class="
-            locale === 'en' ? 'text-white font-semibold' : 'text-gray-400'
-          "
+          :class="locale === 'en' ? 'text-white font-semibold' : 'text-gray-400'"
           class="text-sm transition"
         >
           EN
@@ -148,17 +120,16 @@
         <span class="text-gray-600">|</span>
         <button
           @click="switchLang('id')"
-          :class="
-            locale === 'id' ? 'text-white font-semibold' : 'text-gray-400'
-          "
+          :class="locale === 'id' ? 'text-white font-semibold' : 'text-gray-400'"
           class="text-sm transition"
         >
           ID
         </button>
-        <button @click="showAuth = true; menuOpen = false"
+        <button
+          @click="openAuth"
           class="ml-auto bg-amber-500 text-black font-semibold px-4 py-2 rounded-full text-sm"
         >
-          {{ $t("nav.start") }}
+          {{ $t('nav.start') }}
         </button>
       </div>
     </div>
@@ -186,5 +157,17 @@ function scrollTo(selector) {
   if (el) {
     el.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
+}
+
+// Scroll ke section + tutup menu mobile (satu ekspresi untuk template)
+function navTo(selector) {
+  scrollTo(selector)
+  menuOpen.value = false
+}
+
+// Buka modal auth dari menu mobile
+function openAuth() {
+  showAuth.value = true
+  menuOpen.value = false
 }
 </script>

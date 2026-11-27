@@ -6,7 +6,7 @@ from datetime import datetime, timedelta, timezone
 from typing import List, Optional
 
 from fastapi import APIRouter, Depends
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
 import models
@@ -40,8 +40,8 @@ class AlertReport(BaseModel):
     """Model laporan alert dari petani."""
     jenis_laporan: str  # "hama", "penyakit", "cuaca"
     deskripsi: str
-    latitude: Optional[float] = None
-    longitude: Optional[float] = None
+    latitude: Optional[float] = Field(default=None, ge=-90, le=90, allow_inf_nan=False)
+    longitude: Optional[float] = Field(default=None, ge=-180, le=180, allow_inf_nan=False)
     lokasi_desa: str
 
 
@@ -93,7 +93,7 @@ async def get_active_alerts(db: Session = Depends(get_db)):
     ).all()
 
     for report in verified_reports:
-        if report.latitude and report.longitude:
+        if report.latitude is not None and report.longitude is not None:
             alerts.append(GeoAlert(
                 id=100 + report.id,
                 severity="warning",

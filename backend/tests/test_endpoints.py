@@ -183,6 +183,33 @@ class TestGeo:
         assert data["report_id"] > 0
         assert "Kema" in data["message"]
 
+    @pytest.mark.parametrize("lat,lng", [(91, 125), (-91, 125), (1, 181), (1, -181)])
+    def test_reject_invalid_coordinates(self, lat, lng):
+        response = client.post("/api/geo/report", json={
+            "jenis_laporan": "hama", "deskripsi": "Laporan uji",
+            "latitude": lat, "longitude": lng, "lokasi_desa": "Kema",
+        })
+        assert response.status_code == 422
+
+    def test_verified_alert_at_zero_coordinate(self):
+        import models
+        from database import SessionLocal
+
+        with SessionLocal() as db:
+            report = models.GeoAlertLog(
+                jenis_laporan="hama", deskripsi="Laporan uji",
+                latitude=0.0, longitude=125.0, lokasi_desa="Kema",
+                status="verified", timestamp=datetime.now(timezone.utc).replace(tzinfo=None),
+            )
+            db.add(report)
+            db.commit()
+            report_id = report.id
+
+        response = client.get("/api/geo/alerts")
+        assert response.status_code == 200
+        alerts = response.json()["alerts"]
+        assert any(a["id"] == 100 + report_id and a["latitude"] == 0.0 for a in alerts)
+
     def test_get_dashboard(self):
         """Dashboard governance harus mengembalikan statistik."""
         response = client.get("/api/geo/dashboard")
